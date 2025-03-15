@@ -1,0 +1,9 @@
+.prayer-card {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  opacity: 0.5; /* Start with reduced opacity */
+}
+
+.prayer-card.prayer-time {
+  opacity: 1; /* Full opacity when it's prayer time */
+  transform: scale(1.05); /* Slightly scale up */
+} 
