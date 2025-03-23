@@ -46,7 +46,7 @@ export function getUpcomingPrayer(prayers: Prayer[]): Prayer | null {
 }
 
 export function getTimeUntilNextPrayer(upcomingPrayer: Prayer): string {
-  if (!upcomingPrayer?.time) return '';
+  if (!upcomingPrayer?.time) return '0s'; // Return '0s' if no upcoming prayer
 
   const now = new Date();
   const [hours, minutes] = upcomingPrayer.time.split(':').map(Number);
@@ -54,23 +54,13 @@ export function getTimeUntilNextPrayer(upcomingPrayer: Prayer): string {
   prayerTime.setHours(hours, minutes, 0, 0);
 
   const diffInMilliseconds = prayerTime.getTime() - now.getTime();
-  const diffInMinutes = Math.floor(diffInMilliseconds / (1000 * 60));
-  
-  // If less than 1 minute, show seconds countdown
-  if (diffInMinutes < 1) {
-    const diffInSeconds = Math.max(0, Math.floor(diffInMilliseconds / 1000));
-    return `${diffInSeconds}s`;
-  }
+  const diffInSeconds = Math.max(0, Math.floor(diffInMilliseconds / 1000));
 
-  // For times greater than an hour
-  if (diffInMinutes >= 60) {
-    const hours = Math.floor(diffInMinutes / 60);
-    const minutes = diffInMinutes % 60;
-    return `${hours}h ${minutes}m`;
-  }
+  const hoursUntil = Math.floor(diffInSeconds / 3600);
+  const minutesUntil = Math.floor((diffInSeconds % 3600) / 60);
+  const secondsUntil = diffInSeconds % 60;
 
-  // For times less than an hour but more than a minute
-  return `${diffInMinutes}m`;
+  return `${hoursUntil}h ${minutesUntil}m ${secondsUntil}s`;
 }
 
 export function findPrayerTimeByDate(prayerTimes: PrayerTime[] | undefined, date: Date): PrayerTime | undefined {

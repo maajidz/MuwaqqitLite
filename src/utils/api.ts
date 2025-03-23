@@ -10,6 +10,8 @@ interface PrayerTimeItem {
   fajr_time?: string;
   fajr_time_min?: string;
   sunrise_time?: string;
+  duha_time?: string;
+  duha_time_min?: string;
   zohr_time?: string;
   mithl_time?: string;
   sunset_time?: string;
@@ -109,7 +111,7 @@ export async function getCurrentLocation(): Promise<LocationData> {
         reject(new Error(errorMessage));
       },
       {
-        enableHighAccuracy: true,
+        enableHighAccuracy: false,
         timeout: 10000,
         maximumAge: 0
       }

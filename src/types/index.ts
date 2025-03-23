@@ -2,6 +2,7 @@ export interface PrayerTime {
   date: string;
   fajr_time: string;
   sunrise_time: string;
+  duha_time: string;
   zohr_time: string;
   mithl_time: string;
   sunset_time: string;

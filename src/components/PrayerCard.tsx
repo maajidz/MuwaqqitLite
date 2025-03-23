@@ -1,18 +1,37 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Prayer } from '@/types';
-import { formatPrayerTime } from '@/utils/prayerTimes';
+import { formatPrayerTime, getTimeUntilNextPrayer } from '@/utils/prayerTimes';
 // import { useRive } from '@rive-app/react-canvas';
 import './PrayerCard.css';
 
 interface PrayerCardProps {
   prayer: Prayer;
   isUpcoming: boolean;
-  timeUntil?: string;
   icon: string;
   isPrayerTime: boolean;
 }
 
-const PrayerCard: React.FC<PrayerCardProps> = ({ prayer, isUpcoming, timeUntil, icon, isPrayerTime }) => {
+// Utility function to format seconds into a readable string
+const formatTimeUntil = (seconds: number): string => {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${minutes > 0 ? `${minutes} minute${minutes > 1 ? 's' : ''}` : ''} ${remainingSeconds} second${remainingSeconds !== 1 ? 's' : ''}`.trim();
+};
+
+const PrayerCard: React.FC<PrayerCardProps> = ({ prayer, isUpcoming, icon, isPrayerTime }) => {
+  const [timeUntil, setTimeUntil] = useState<string>('0s');
+
+  useEffect(() => {
+    if (isUpcoming) {
+      const interval = setInterval(() => {
+        const updatedTimeUntil = getTimeUntilNextPrayer(prayer);
+        setTimeUntil(updatedTimeUntil);
+      }, 1000);
+
+      return () => clearInterval(interval); // Cleanup on unmount
+    }
+  }, [isUpcoming, prayer]);
+
   // const getBackgroundAnimation = () => {
   //   if (isUpcoming && prayer.name === 'Fajr') {
   //     return '/isha.riv';
@@ -38,7 +57,6 @@ const PrayerCard: React.FC<PrayerCardProps> = ({ prayer, isUpcoming, timeUntil, 
 
   return (
     <div
-
       className={`relative rounded-xl p-4 mb-3 ${
         isUpcoming 
           ? 
@@ -64,7 +82,8 @@ const PrayerCard: React.FC<PrayerCardProps> = ({ prayer, isUpcoming, timeUntil, 
             </p>
           )}
         </div>
-        {isUpcoming && timeUntil && (
+        {/* {isUpcoming && timeUntil !== undefined && ( */}
+        {isUpcoming && (
           <div className="flex flex-col items-end">
             <span className="bg-white text-blue-600 text-xs font-semibold px-3 py-1 rounded-full mb-1 shadow-sm">
               Upcoming
@@ -80,4 +99,4 @@ const PrayerCard: React.FC<PrayerCardProps> = ({ prayer, isUpcoming, timeUntil, 
   );
 };
 
-export default PrayerCard; 
+export default PrayerCard;
